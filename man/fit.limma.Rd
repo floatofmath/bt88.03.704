@@ -1,0 +1,36 @@
+\name{fit.limma}
+\alias{fit.limma}
+\title{Wrapper script for lmFit, contrast.fit and ebayes}
+\description{
+  \code{fit.limma} fits a \pkg{limma} model, computes contrasts and
+  applies an emperical bayes procedure to shrink variance estimates}
+\usage{
+   fit.limma(data,MM,CM)
+}
+\arguments{
+  \item{data}{
+    An expression set
+  }
+  \item{MM}{
+    A model matrix
+  }
+  \item{CM}{
+    A contrast matrix
+  }
+}
+\author{
+  Florian Klinglmueller \email{float@lefant.net}
+}
+\examples{
+data <- matrix(rnorm(600),ncol=6)
+design <- data.frame('Treatment' = factor(rep(0:1,each=3)))
+mm <- model.matrix(~0+Treatment,design)
+colnames(mm) <- c('control','treatment')
+cm <- makeContrasts('control-treatment',levels=mm)
+out <- fit.limma(data,mm,cm)
+
+topTable(out)
+}
+
+
+    
