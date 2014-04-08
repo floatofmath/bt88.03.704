@@ -8,11 +8,9 @@
 # then plot 1 will go in the upper left, 2 will go in the upper right, and
 # 3 will go all the way across the bottom.
 #
-
 ## stolen from R Graphics Cookbook courtesy of Winston Change
 ## http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/
-
-multiplot <- function(..., plotlist=NULL, cols=1, layout=NULL) {
+multiplot <- function(..., plotlist=NULL, cols=1, layout=NULL, titles=NULL) {
   require(grid)
 
   # Make a list from the ... arguments and plotlist
@@ -28,7 +26,16 @@ multiplot <- function(..., plotlist=NULL, cols=1, layout=NULL) {
     layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
                     ncol = cols, nrow = ceiling(numPlots/cols))
   }
-
+  # Add titles, you could do this for each plot, but it seems nice to have it here as well
+  if(!is.null(titles)){
+     if(numPlots != length(titles)){
+         stop(paste('Number of titles (',length(titles),') needs to match number of plots (',numPlots,')!',sep=''))
+     }
+     for(i in 1:numPlots){
+         plots[[i]] <- plots[[i]]+ggtitle(titles[i])
+     }
+ }
+         
  if (numPlots==1) {
     print(plots[[1]])
 
