@@ -11,4 +11,3 @@ Depends: R (>= 3.0.0)
 Suggests: ggplot2 
 Description: Provides a number of useful functions and a container to put them in for further reuse
 License: MIT
-

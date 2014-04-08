@@ -5,7 +5,7 @@
   \code{mulitplot} prints several \pkg{ggplot} plot-objects on one device
 }
 \usage{
-   multiplot(..., plotlist=NULL, cols=1, layout=NULL)
+   multiplot(..., plotlist=NULL, cols=1, layout=NULL, titles=NULL)
 }
 \arguments{
   \item{...}{
@@ -22,6 +22,9 @@
   }
   \item{layout}{
     A matrix specifying the layout. If present, 'cols' is ignored.
+  }
+  \item{titles}{
+    A vector with titles for the individual plots
   }
 }
 \details{  
