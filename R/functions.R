@@ -55,3 +55,68 @@ multiplot <- function(..., plotlist=NULL, cols=1, layout=NULL, titles=NULL) {
   }
 }
 
+##' Make a versioned filename
+##'
+##' This function returns a filename with a version extension to avoid
+##' overwriting older results. The extension may either be the date
+##' (with time) or a random hash. The latter may be useful if you want
+##' to obscure the date of the data generation.
+##'
+##' @param base character giving the main part of the filename
+##' @param ending file ending
+##' @param format format for date time version
+##' @param hash   (defunct) if true a hash is used for versioning the filename
+##'
+##' @export
+vfile <- function(base,ending='Rd',format='%y%m%d',hash=FALSE){
+    fname <- paste(base,'_',format(Sys.time(),format),'.',ending,sep='')
+    fname
+}
+
+##' Newest (versioned) file
+##'
+##' Searches a directory for versioned files with the given base name
+##' and returns its newest filename.
+##'
+##' @param base character giving the main part of the filename
+##' @param path path to directory to search in 
+##' @param ending file ending
+##' @param format format for date time version
+##' @param ostime (defunct) should the time of file generation return by the OS be used (useful for hashed files)?
+##'
+##' @export
+newest_vfile <- function(base,path=getwd(),ending='Rd',format='%y%m%d',ostime=FALSE){
+    fnames <- list.files(path,pattern=paste(base,'*',sep=''))
+    newest <- which.max(as.Date(sapply(lapply(strsplit(fnames,'_'),tail,n=1),sub,pattern=paste('\\.',ending,sep=''),replacement=''),format))
+    fnames[newest]
+}    
+    
+
+
+##' Print system load and user overview
+##'
+##' This script uses top to print the
+##' system load, memory usage and a list
+##' of active users with their proportion
+##' of memory and cpu usage.
+##' @export
+Rtop <- function(){
+    av.load <- as.numeric(gsub(',','',unlist(strsplit(system("top -c -b -n 1| awk '{print $10\";\"$11\";\"$12}'",intern=T)[1],';'))))
+names(av.load) <- c('1min','5min','15min')
+    mem.used <- as.numeric(unlist(strsplit(system("top -c -b -n 1| awk '{print $3\";\"$5}'",intern=T)[4],';')))
+    prop.mem <- mem.used[2]/mem.used[1]
+    swap.used <- as.numeric(unlist(strsplit(system("top -c -b -n 1| awk '{print $3\";\"$5}'",intern=T)[5],';')))
+    prop.swap <- swap.used[2]/swap.used[1]
+    proc <- system("top -c -b -n 1|awk 'BEGIN {skip = 7; lines = 1;}{if (lines <= skip) { lines++ } else { print $2\";\"$9\";\"$10} }'",intern=T)
+    proc <- do.call('rbind',lapply(proc,function(e) unlist(strsplit(e,';'))))
+    users <- unique(proc[,1])
+    cpu <- tapply(as.numeric(proc[,2]),proc[,1],sum)
+    mem <- tapply(as.numeric(proc[,3]),proc[,1],sum)
+    proc <- cbind(cpu,mem)
+    cat('               1min 5min 15min\n')
+    cat('Average load: ',av.load,'\n',sep=' ')
+    cat('Memomery used:',round(prop.mem,2)*100,'%\n')
+    cat('Swap used:    ',round(prop.swap,2)*100,'%\n')
+    cat('Active users: \n')
+    print(proc)
+}
