@@ -1,15 +1,35 @@
-# Multiple plot function
-#
-# ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)
-# - cols:   Number of columns in layout
-# - layout: A matrix specifying the layout. If present, 'cols' is ignored.
-#
-# If the layout is something like matrix(c(1,2,3,3), nrow=2, byrow=TRUE),
-# then plot 1 will go in the upper left, 2 will go in the upper right, and
-# 3 will go all the way across the bottom.
-#
-## stolen from R Graphics Cookbook courtesy of Winston Change
-## http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/
+#' Plot several ggplot objects in one device
+#' 
+#' \code{mulitplot} prints several \pkg{ggplot} plot-objects on one device
+#' 
+#' If the layout is something like matrix(c(1,2,3,3), nrow=2, byrow=TRUE), then
+#' plot 1 will go in the upper left, 2 will go in the upper right, and 3 will
+#' go all the way across the bottom.
+#' 
+#' @param ...  Several \code{ggplot} objects that should be placed on the same
+#' plotting device
+#' @param plotlist Optional - a list of \code{ggplot} objects to be placed on
+#' the same plotting device
+#' @param cols Number of columns of the layout in which the objects are to be
+#' plotted. Will be ignored if \option{layout} is present.
+#' @param layout A matrix specifying the layout. If present, 'cols' is ignored.
+#' @param titles A vector with titles for the individual plots
+#' @note Original code was taken from R Graphics Cookbook courtesy of Winston
+#' Change
+#' \url{http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/}
+#' @author Florian Klinglmueller \email{float@@lefant.net}, Winston Chang
+#' @references Chang, W. (2012). R graphics cookbook. \emph{O'Reilly Media,
+#' Inc.}
+#' @examples
+#' 
+#' x <- rnorm(100)
+#' y <- rnorm(100)
+#' d <- data.frame('y'=y,'x'=x,'s'=x+y)
+#' p1 <- qplot(y,x,data=d,)
+#' p2 <- qplot(y,s,data=d)
+#' multiplot(p1,p2,cols=2)
+#' 
+#' @export multiplot
 multiplot <- function(..., plotlist=NULL, cols=1, layout=NULL, titles=NULL) {
   require(grid)
 
@@ -55,36 +75,39 @@ multiplot <- function(..., plotlist=NULL, cols=1, layout=NULL, titles=NULL) {
   }
 }
 
-##' Make a versioned filename
-##'
-##' This function returns a filename with a version extension to avoid
-##' overwriting older results. The extension may either be the date
-##' (with time) or a random hash. The latter may be useful if you want
-##' to obscure the date of the data generation.
-##'
-##' @param base character giving the main part of the filename
-##' @param ending file ending
-##' @param format format for date time version
-##' @param hash   (defunct) if true a hash is used for versioning the filename
-##'
-##' @export
+
+
+#' Make a versioned filename
+#' 
+#' This function returns a filename with a version extension to avoid
+#' overwriting older results. The extension may either be the date (with time)
+#' or a random hash. The latter may be useful if you want to obscure the date
+#' of the data generation.
+#' 
+#' 
+#' @param base character giving the main part of the filename
+#' @param ending file ending
+#' @param format format for date time version
+#' @param hash (defunct) if true a hash is used for versioning the filename
 vfile <- function(base,ending='Rd',format='%y%m%d',hash=FALSE){
     fname <- paste(base,'_',format(Sys.time(),format),'.',ending,sep='')
     fname
 }
 
-##' Newest (versioned) file
-##'
-##' Searches a directory for versioned files with the given base name
-##' and returns its newest filename.
-##'
-##' @param base character giving the main part of the filename
-##' @param path path to directory to search in 
-##' @param ending file ending
-##' @param format format for date time version
-##' @param ostime (defunct) should the time of file generation return by the OS be used (useful for hashed files)?
-##'
-##' @export
+
+
+#' Newest (versioned) file
+#' 
+#' Searches a directory for versioned files with the given base name and
+#' returns its newest filename.
+#' 
+#' 
+#' @param base character giving the main part of the filename
+#' @param path path to directory to search in
+#' @param ending file ending
+#' @param format format for date time version
+#' @param ostime (defunct) should the time of file generation return by the OS
+#' be used (useful for hashed files)?
 newest_vfile <- function(base,path=getwd(),ending='Rd',format='%y%m%d',ostime=FALSE){
     fnames <- list.files(path,pattern=paste(base,'*',sep=''))
     newest <- which.max(as.Date(sapply(lapply(strsplit(fnames,'_'),tail,n=1),sub,pattern=paste('\\.',ending,sep=''),replacement=''),format))
@@ -93,13 +116,14 @@ newest_vfile <- function(base,path=getwd(),ending='Rd',format='%y%m%d',ostime=FA
     
 
 
-##' Print system load and user overview
-##'
-##' This script uses top to print the
-##' system load, memory usage and a list
-##' of active users with their proportion
-##' of memory and cpu usage.
-##' @export
+
+
+#' Print system load and user overview
+#' 
+#' This script uses top to print the system load, memory usage and a list of
+#' active users with their proportion of memory and cpu usage.
+#' 
+#' 
 Rtop <- function(){
     av.load <- as.numeric(gsub(',','',unlist(strsplit(system("top -c -b -n 1| awk '{print $10\";\"$11\";\"$12}'",intern=T)[1],';'))))
 names(av.load) <- c('1min','5min','15min')
