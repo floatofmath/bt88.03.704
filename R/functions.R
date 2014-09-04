@@ -114,7 +114,25 @@ newest_vfile <- function(base,path=getwd(),ending='Rd',format='%y%m%d',ostime=FA
     fnames[newest]
 }    
     
-
+##' modified setwd
+##'
+##' Does windows to linux and vice versa home directory name
+##' translation
+##' 
+##' If the detected OS is Linux directories starting with '//' will be renamed to '~/' if it is Windows the otherway around, else the directory name stays unchanged 
+##'
+##' @param dir A character string
+##' @seealso \code{\link[base]{setwd}} for the base function
+##' @author float
+setwd <- function(dir){
+    sys <- Sys.info()['sysname']
+    if(sys == 'Linux'){
+        dir <- sub('^//','~/',dir)
+    } else if(sys == 'Windows'){
+        dir <- sub('^~/','//',dir)
+    } 
+    base:::setwd(dir)
+}
 
 
 
