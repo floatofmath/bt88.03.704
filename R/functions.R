@@ -89,6 +89,8 @@ multiplot <- function(..., plotlist=NULL, cols=1, layout=NULL, titles=NULL) {
 #' @param ending file ending
 #' @param format format for date time version
 #' @param hash (defunct) if true a hash is used for versioning the filename
+#'
+#' @export
 vfile <- function(base,ending='Rd',format='%y%m%d',hash=FALSE){
     fname <- paste(base,'_',format(Sys.time(),format),'.',ending,sep='')
     fname
@@ -108,6 +110,8 @@ vfile <- function(base,ending='Rd',format='%y%m%d',hash=FALSE){
 #' @param format format for date time version
 #' @param ostime (defunct) should the time of file generation return by the OS
 #' be used (useful for hashed files)?
+#'
+#' @export
 newest_vfile <- function(base,path=getwd(),ending='Rd',format='%y%m%d',ostime=FALSE){
     fnames <- list.files(path,pattern=paste(base,'*',sep=''))
     newest <- which.max(as.Date(sapply(lapply(strsplit(fnames,'_'),tail,n=1),sub,pattern=paste('\\.',ending,sep=''),replacement=''),format))
@@ -124,6 +128,8 @@ newest_vfile <- function(base,path=getwd(),ending='Rd',format='%y%m%d',ostime=FA
 ##' @param dir A character string
 ##' @seealso \code{\link[base]{setwd}} for the base function
 ##' @author float
+##'
+##' @export
 setwd <- function(dir){
     sys <- Sys.info()['sysname']
     if(sys == 'Linux'){
@@ -141,7 +147,7 @@ setwd <- function(dir){
 #' This script uses top to print the system load, memory usage and a list of
 #' active users with their proportion of memory and cpu usage.
 #' 
-#' 
+#' @export
 Rtop <- function(){
     av.load <- as.numeric(gsub(',','',unlist(strsplit(system("top -c -b -n 1| awk '{print $10\";\"$11\";\"$12}'",intern=T)[1],';'))))
 names(av.load) <- c('1min','5min','15min')
