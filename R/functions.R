@@ -140,6 +140,35 @@ setwd <- function(dir){
     base:::setwd(dir)
 }
 
+##' List fold (reduce)
+##'
+##' Reduce for lists
+##'
+##' @param list 
+##' @param fun a binary function taking elements of the list as values
+##' @param z initial value, if empty the first element of the list will be used 
+##' @return same as output of \code{fun}
+##' @author float
+##'
+##' @export
+list_fold <- function(list,fun,z=NULL){
+    fun <- match.fun(fun)
+    if(is.null(z)){
+        if(length(list)==0){
+            stop("List of length 0 requires initial value")
+        }
+        z <- list[[1]]
+        list <- tail(list,-1)
+    }
+    foldr <- function(list,z,fun){
+        if(length(list)==0){
+            return(z)
+        }
+        fun(z,foldr(tail(list,-1),list[[1]],fun))
+    }
+    foldr(list,z,fun)
+}
+
 
 
 #' Print system load and user overview
