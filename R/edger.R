@@ -6,7 +6,7 @@
 ##' @param CM a contrast matrix
 ##' @param ... additional parameters passed to glmLRT
 ##' @return a DGELRT object
-##' @author Florian Klinglmueller \email{float@lefant.net}
+##' @author Florian Klinglmueller 
 ##' @examples
 ##'
 ##' ## setting up some random data
@@ -27,7 +27,7 @@
 ##' 
 ##' topTags(out)
 ##' 
-##' @export fit.edgeR
+##' @export fit.edger
 fit.edger <- function(data,MM,CM,...){
     require(edgeR)
     fit <- glmFit(data,MM)
