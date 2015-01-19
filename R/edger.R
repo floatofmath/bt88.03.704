@@ -27,6 +27,7 @@ fit.edger <- function(data,MM,CM,...){
 ##' @author Florian Klinglmueller
 ##' @template edger-ex
 ##' @export myTopTags
+##' @import data.table
 myTopTags <- function(lrts,N=NULL,annodata=NULL,key='nearest_ref_id'){
     require(data.table)
     table <- as.data.table(lrts$table,keep=T)

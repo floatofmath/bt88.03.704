@@ -38,7 +38,7 @@ cm <- makeContrasts('control-treatment',levels=mm)
 ## fit and test
 out <- fit.edger(dge,mm,cm)
 
-myTopTags(out)
+myTopTags(out,3)
 }
 \author{
 Florian Klinglmueller
