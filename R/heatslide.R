@@ -1,5 +1,5 @@
 #' Heatmap with dotplot like visualization of effect sizes
-#' 
+n#' 
 #' Draws a heatmap of a matrix (e.g. gene expression data) together with
 #' dotplots of a statistic (e.g. log fold change between experimental settings)
 #' for each line
@@ -12,6 +12,7 @@
 #' @param pheno Vector giving the group labels for each column of the matrix
 #' @param hcols Colours to be used in the heatmap
 #' @param lcols Colours to indicate the column labels
+#' @param scale Scale expression values by either 'row', 'column', or 'none'
 #' @param slidetitle Text to be shown below the panel containing the dotplots
 #' @author Florian Klinglmueller \email{float@@lefant.net}
 #' @examples
@@ -25,14 +26,20 @@
 #'     heatslide(mat,stat,labels,hcols,lcols)
 #' 
 #' @export heatslide
-heatslide <- function(mat,stat,pheno,hcols,lcols,slidetitle='Log (Base 2) Foldchange'){
+heatslide <- function(mat,stat,pheno,hcols,lcols,scale=c('row','column','none'),slidetitle='Log (Base 2) Foldchange'){
   require(grid)
   heatpanel <- function(matrix,colors){
 
     N <- nrow(matrix)
     M <- ncol(matrix)
     pushViewport(dataViewport(1:M,0:N,extension=c(.05,0)))
-    data <- as.numeric(matrix)
+    if(is.data.frame(matrix)){
+        matrix <- as.matrix(matrix)
+    }
+    data <- switch(scale[1],
+                   row=t(apply(matrix,1,scale)),
+                   column=apply(matrix,2,scale),
+                   both=matrix)
     levs <- length(colors)
     data.levels <- cut(data,levs)
     x <- rep(1:M,each=N)
@@ -46,8 +53,14 @@ heatslide <- function(mat,stat,pheno,hcols,lcols,slidetitle='Log (Base 2) Foldch
   }
 
   slidepanel <- function(matrix,colors,slidetitle){
-    M <- ncol(matrix)
-    N <- nrow(matrix)
+      if(is.matrix(matrix)){
+          M <- ncol(matrix)
+          N <- nrow(matrix)
+      } else {
+          M <- 1
+          N <- length(matrix)
+          matrix <- as.matrix(matrix,ncol=M,drop=F)
+      }
     pushViewport(dataViewport(as.numeric(matrix),1:N,extension=1/(2*(N-1)),name='plotRegion'))
     if(N<2){
       grid.segments(rep(0,N),unit(N:1,'native'),rep(1,N),unit(N:1,'native'),name='lines',gp=gpar(lty=2))
@@ -67,7 +80,7 @@ heatslide <- function(mat,stat,pheno,hcols,lcols,slidetitle='Log (Base 2) Foldch
     grid.rect()
     grid.xaxis(gp=gpar(cex=.5))
 
-    grid.text(x=rep(1.1,N),y=unit(N:1,'native'),label=rownames(matrix),just='left',gp=gpar(cex=.5))
+    grid.text(x=rep(1.1,N),y=unit(N:1,'native'),label=rownames(mat),just='left',gp=gpar(cex=.8))
     grid.text(x=.1,y=unit(0,'npc')-unit(3,'lines'),label=slidetitle,gp=gpar(cex=.6),just='left')
   }
 
@@ -85,6 +98,7 @@ heatslide <- function(mat,stat,pheno,hcols,lcols,slidetitle='Log (Base 2) Foldch
   vp1 <- viewport(0,width=.2,just='left')
   vp2 <- viewport(.2,width=.55,just='left')
   vp3 <- viewport(.8,width=.15,just='left')
+  grid.newpage()
   vpAll <- plotViewport(margins=c(7,5,5,4))
 
   pushViewport(vpAll)
@@ -100,6 +114,7 @@ heatslide <- function(mat,stat,pheno,hcols,lcols,slidetitle='Log (Base 2) Foldch
   pushViewport(vp3)
   slidepanel(stat,lcols,slidetitle)
   upViewport()
+  popViewport(0)
 }
 
         
