@@ -4,8 +4,10 @@
 \alias{heatslide}
 \title{Heatmap with dotplot like visualization of effect sizes}
 \usage{
-heatslide(mat, stat, pheno, hcols, lcols, scale = c("row", "column", "none"),
-  slidetitle = "Log (Base 2) Foldchange")
+heatslide(mat, stat, pheno, genenames = NULL,
+  hcols = colorRampPalette(c("blue", "white", "red"))(32),
+  lcols = rainbow(length(levels(pheno))), scale = c("row", "column",
+  "none"), slidetitle = "Log (Base 2) Foldchange")
 }
 \arguments{
 \item{mat}{Matrix containing the values to be plotted in the heatmap}
@@ -14,6 +16,8 @@ heatslide(mat, stat, pheno, hcols, lcols, scale = c("row", "column", "none"),
 each line of the heatmap}
 
 \item{pheno}{Vector giving the group labels for each column of the matrix}
+
+\item{genenames}{Character vector giving genenames (or corresponding annotation)}
 
 \item{hcols}{Colours to be used in the heatmap}
 

@@ -10,6 +10,7 @@
 #' @param stat Vector of values that should be plotted by the dotplot beside
 #' each line of the heatmap
 #' @param pheno Vector giving the group labels for each column of the matrix
+#' @param genenames Character vector giving genenames (or corresponding annotation)
 #' @param hcols Colours to be used in the heatmap
 #' @param lcols Colours to indicate the column labels
 #' @param scale Scale expression values by either 'row', 'column', or 'none'
@@ -26,10 +27,14 @@
 #'     heatslide(mat,stat,labels,hcols,lcols)
 #' 
 #' @export heatslide
-heatslide <- function(mat,stat,pheno,hcols,lcols,scale=c('row','column','none'),slidetitle='Log (Base 2) Foldchange'){
+heatslide <- function(mat,stat,pheno,
+                      genenames=NULL,
+                      hcols=colorRampPalette(c('blue','white','red'))(32),
+                      lcols=rainbow(length(levels(pheno))),
+                      scale=c('row','column','none'),
+                      slidetitle='Log (Base 2) Foldchange'){
   require(grid)
   heatpanel <- function(matrix,colors){
-
     N <- nrow(matrix)
     M <- ncol(matrix)
     pushViewport(dataViewport(1:M,0:N,extension=c(.05,0)))
@@ -48,42 +53,69 @@ heatslide <- function(mat,stat,pheno,hcols,lcols,scale=c('row','column','none'),
     xax <- grid.xaxis(at=1:M,label=colnames(matrix),gp=gpar(cex=.7),name='xax',draw=F)
     xax <- editGrob(xax,gPath('labels'),just='right',rot=90)
     grid.draw(xax)
-#    grid.text(x=0.5,y=-.25,label='Array',gp=gpar(cex=.8))
+    grid.text(x=0.5,y=-.25,label='Array',gp=gpar(cex=.8))
     grid.text(x=-.2,y=.6,label='Genes',rot=90,gp=gpar(cex=.8))
   }
 
-  slidepanel <- function(matrix,colors,slidetitle){
-      if(is.matrix(matrix)){
-          M <- ncol(matrix)
-          N <- nrow(matrix)
+  slidepanel <- function(statistics,genenames,slidetitle){
+    N <- length(statistics)
+    pushViewport(dataViewport(as.numeric(statistics),1:N,extension=1/(2*(N-1)),name='plotRegion'))
+    grid.rect()
+    grid.xaxis(gp=gpar(cex=.5))
+    if(!is.null(genenames)){
+        grid.text(x=rep(1.1,N),y=unit(N:1,'native'),label=genenames,just='left',gp=gpar(cex=.8))
+    }
+    grid.text(x=.1,y=unit(0,'npc')-unit(3,'lines'),label=slidetitle,gp=gpar(cex=.6),just='left')
+    if(N<2){
+        grid.segments(rep(0,N),unit(N:1,'native'),rep(1,N),unit(N:1,'native'),name='lines',gp=gpar(lty=2))
+    }
+    grid.segments(rep(0,N),unit(c(1:(N-1))+.5,'native'),rep(1,N),unit(c(1:(N-1))+.5,'native'),name='seperators')
+    if(N<=2){
+        grid.segments(rep(0,N),unit((((N:1)-.5)+.5),'native'),rep(1,N),unit((((N:1)-.5)+.5/(1+1)),'native'),name='lines',gp=gpar(lty=2))
+        
+        grid.rect(statistics,unit((((N:1)-.5)+.5/(1+1)),'native'),width=unit(1,'mm'),height=1/1,default.units='native',name=paste(1,'S',sep=''),gp=gpar(fill='red'))
+    }
+    else{
+        grid.rect(statistics,unit(N:1,'native'),width=unit(1,'mm'),height=.8,default.units='native',name=paste(1,'S',sep=''),gp=gpar(fill='red'))
+    }
+    if(sign(min(stat))<sign(max(stat))) grid.lines(x=unit(c(0,0),'native'),y=unit(c(0,1),'npc'))
+  }
+
+    multipanel <- function(statistics,genenames,colors,slidetitle){
+      if(is.matrix(statistics)){
+          M <- ncol(statistics)
+          N <- nrow(statistics)
       } else {
           M <- 1
-          N <- length(matrix)
-          matrix <- as.matrix(matrix,ncol=M,drop=F)
+          N <- length(statistics)
+          statistics <- as.matrix(statistics,ncol=M,drop=F)
       }
-    pushViewport(dataViewport(as.numeric(matrix),1:N,extension=1/(2*(N-1)),name='plotRegion'))
+    pushViewport(dataViewport(as.numeric(statistics),1:N,extension=1/(2*(N-1)),name='plotRegion'))
     if(N<2){
       grid.segments(rep(0,N),unit(N:1,'native'),rep(1,N),unit(N:1,'native'),name='lines',gp=gpar(lty=2))
     }
+    ## separate sliders
     grid.segments(rep(0,N),unit(c(1:(N-1))+.5,'native'),rep(1,N),unit(c(1:(N-1))+.5,'native'),name='seperators')
     for(level in 1:M){
       if(N<=2){
         grid.segments(rep(0,N),unit((((N:1)-.5)+level/(M+1)),'native'),rep(1,N),unit((((N:1)-.5)+level/(M+1)),'native'),name='lines',gp=gpar(lty=2))
       
-        grid.rect(matrix[,level],unit((((N:1)-.5)+level/(M+1)),'native'),width=unit(1,'mm'),height=1/M,default.units='native',name=paste(level,'S',sep=''),gp=gpar(fill=colors[level]))
+        grid.rect(statistics[,level],unit((((N:1)-.5)+level/(M+1)),'native'),width=unit(1,'mm'),height=1/M,default.units='native',name=paste(level,'S',sep=''),gp=gpar(fill=colors[level]))
       }
       else{
-        grid.rect(matrix[,level],unit(N:1,'native'),width=unit(1,'mm'),height=.8,default.units='native',name=paste(level,'S',sep=''),gp=gpar(fill=colors[level]))
+        grid.rect(statistics[,level],unit(N:1,'npc'),width=unit(0.5,'npc'),height=.8,default.units='native',name=paste(level,'S',sep=''),gp=gpar(fill=colors[level]))
       }
     }
     if(sign(min(stat))<sign(max(stat))) grid.lines(x=unit(c(0,0),'native'),y=unit(c(0,1),'npc'))
     grid.rect()
     grid.xaxis(gp=gpar(cex=.5))
-
-    grid.text(x=rep(1.1,N),y=unit(N:1,'native'),label=rownames(mat),just='left',gp=gpar(cex=.8))
+    if(!is.null(genenames)){
+        grid.text(x=rep(1.1,N),y=unit(N:1,'native'),label=genenames,just='left',gp=gpar(cex=.8))
+    }
     grid.text(x=.1,y=unit(0,'npc')-unit(3,'lines'),label=slidetitle,gp=gpar(cex=.6),just='left')
   }
 
+  
   legendpanel <- function(levels,colors){
     N <- length(levels)
     pushViewport(plotViewport(c(1,1,0,1)))
@@ -112,9 +144,12 @@ heatslide <- function(mat,stat,pheno,hcols,lcols,scale=c('row','column','none'),
   keypanel(pheno,lcols)
   upViewport(2)
   pushViewport(vp3)
-  slidepanel(stat,lcols,slidetitle)
-  upViewport()
-  popViewport(0)
+  if(is.matrix(stat)){
+      multipanel(stat,genenames,lcols,slidetitle)
+  } else {
+      slidepanel(stat,genenames,slidetitle)
+  }
+  upViewport(2)
 }
 
         

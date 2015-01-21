@@ -54,9 +54,9 @@ myTopTags <- function(lrts,N=NULL,annodata=NULL,key='nearest_ref_id'){
 ##' @return a character string with the url to the tag in the ucsc
 ##' @author float
 ##' @export
-makeUCSClink <- function(locus,project="&hgsid=201952662_blwe2mLIAlJ066Rb2rEAvZDqZiGz"){
+makeUCSClink <- function(locus,project="&hgsid=201952662_blwe2mLIAlJ066Rb2rEAvZDqZiGz",link='UCSC'){
     locus <- sub(":","%3A",locus)
-    paste0("http://genome-euro.ucsc.edu/cgi-bin/hgTracks?db=mm10&position=",locus,project)
+    paste0("<a href=\"http://genome-euro.ucsc.edu/cgi-bin/hgTracks?db=mm10&position=",locus,project,"\">",link,"</a>")
 }
 
 ##' Make a heatmap from myTopTags
@@ -70,11 +70,7 @@ makeUCSClink <- function(locus,project="&hgsid=201952662_blwe2mLIAlJ066Rb2rEAvZD
 ##' @author float
 ##' @export
 plotTopTags <- function(tt,groups,dataCols,anno="gene_short_name"){
-    library(RColorBrewer)
-    library(gplots)
-    data <- as.data.frame(tt[,dataCols,with=F])
-    rownames(data) <- tt[[anno]]
-    heatslide(data,tt[,logFC],groups,bluered(32),brewer.pal(length(levels(groups)),name='Accent'))
+    heatslide(tt[,dataCols,with=F],tt[['logFC']],groups,genenames=tt[[anno]])
 }
 
 ##' Apply non-specific filtering to DGEList
