@@ -1,5 +1,5 @@
 #' Heatmap with dotplot like visualization of effect sizes
-n#' 
+#' 
 #' Draws a heatmap of a matrix (e.g. gene expression data) together with
 #' dotplots of a statistic (e.g. log fold change between experimental settings)
 #' for each line

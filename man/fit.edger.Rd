@@ -11,7 +11,7 @@ fit.edger(data, MM, CM, ...)
 
 \item{MM}{a model matrix}
 
-\item{CM}{a contrast matrix}
+\item{CM}{a contrast matrix if NULL no contrasts will be fit}
 
 \item{...}{additional parameters passed to glmLRT}
 }

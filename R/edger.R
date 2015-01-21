@@ -66,7 +66,7 @@ makeUCSClink <- function(locus,project="&hgsid=201952662_blwe2mLIAlJ066Rb2rEAvZD
 ##' @param groups sample groups to be outlined in the plot
 ##' @param dataCols columns with data to be shown
 ##' @param anno columns with tag identifiers
-##' @return 
+##' @return grid plot of heatmap
 ##' @author float
 ##' @export
 plotTopTags <- function(tt,groups,dataCols,anno="gene_short_name"){

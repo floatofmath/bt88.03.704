@@ -4,7 +4,7 @@
 \alias{heatslide}
 \title{Heatmap with dotplot like visualization of effect sizes}
 \usage{
-heatslide(mat, stat, pheno, hcols, lcols,
+heatslide(mat, stat, pheno, hcols, lcols, scale = c("row", "column", "none"),
   slidetitle = "Log (Base 2) Foldchange")
 }
 \arguments{
@@ -18,6 +18,8 @@ each line of the heatmap}
 \item{hcols}{Colours to be used in the heatmap}
 
 \item{lcols}{Colours to indicate the column labels}
+
+\item{scale}{Scale expression values by either 'row', 'column', or 'none'}
 
 \item{slidetitle}{Text to be shown below the panel containing the dotplots}
 }
