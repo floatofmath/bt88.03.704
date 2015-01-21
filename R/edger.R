@@ -68,6 +68,7 @@ makeUCSClink <- function(locus,project="&hgsid=201952662_blwe2mLIAlJ066Rb2rEAvZD
 ##' @param anno columns with tag identifiers
 ##' @return 
 ##' @author float
+##' @export
 plotTopTags <- function(tt,groups,dataCols,anno="gene_short_name"){
     library(RColorBrewer)
     library(gplots)
