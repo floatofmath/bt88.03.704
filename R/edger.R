@@ -56,7 +56,7 @@ myTopTags <- function(lrts,N=NULL,annodata=NULL,key='nearest_ref_id'){
 ##' @export
 makeUCSClink <- function(locus,project="&hgsid=201952662_blwe2mLIAlJ066Rb2rEAvZDqZiGz",link='UCSC'){
     locus <- sub(":","%3A",locus)
-    paste0("<a href=\"http://genome-euro.ucsc.edu/cgi-bin/hgTracks?db=mm10&position=",locus,project,"\">",link,"</a>")
+    paste0("<a href=\"http://genome-euro.ucsc.edu/cgi-bin/hgTracks?db=mm10&position=",locus,project,"target=\"_blank\"\">",link,"</a>")
 }
 
 ##' Make a heatmap from myTopTags
