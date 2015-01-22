@@ -34,8 +34,11 @@ myTopTags <- function(lrts,N=NULL,annodata=NULL,key='nearest_ref_id'){
     setnames(table,'rn',key)
     setkey(table,PValue)
     table[,QValue:=p.adjust(PValue,method='BH')]
-    if(is.null(N) | is.infinite(N)){
+    if(is.null(N)){
         N <- nrow(table[QValue <.05])
+    }
+    if(is.infinite(N)){
+        N <- nrow(table)
     }
     if(!is.null(annodata)){
         setkeyv(table,key)
