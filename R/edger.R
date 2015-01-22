@@ -43,7 +43,7 @@ myTopTags <- function(lrts,N=NULL,annodata=NULL,key='nearest_ref_id'){
     if(!is.null(annodata)){
         setkeyv(table,key)
         setkeyv(annodata,key)
-        table <- table[annodata,,nomatch=0]
+        table <- annodata[table,,nomatch=0]
         setkeyv(table,'PValue')
     }
     table[1:N]
