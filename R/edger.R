@@ -34,7 +34,7 @@ myTopTags <- function(lrts,N=NULL,annodata=NULL,key='nearest_ref_id'){
     setnames(table,'rn',key)
     setkey(table,PValue)
     table[,QValue:=p.adjust(PValue,method='BH')]
-    if(is.null(N)){
+    if(is.null(N) | is.infinite(N)){
         N <- nrow(table[QValue <.05])
     }
     if(!is.null(annodata)){
@@ -54,7 +54,7 @@ myTopTags <- function(lrts,N=NULL,annodata=NULL,key='nearest_ref_id'){
 ##' @return a character string with the url to the tag in the ucsc
 ##' @author float
 ##' @export
-makeUCSClink <- function(locus,project="&hgsid=201952662_blwe2mLIAlJ066Rb2rEAvZDqZiGz",link='UCSC'){
+makeUCSClink <- function(locus,project="",link='UCSC'){
     locus <- sub(":","%3A",locus)
     paste0("<a href=\"http://genome-euro.ucsc.edu/cgi-bin/hgTracks?db=mm10&position=",locus,project,"\" target=\"_blank\">",link,"</a>")
 }
