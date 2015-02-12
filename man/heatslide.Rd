@@ -6,8 +6,9 @@
 \usage{
 heatslide(mat, stat, pheno, genenames = NULL,
   hcols = colorRampPalette(c("blue", "white", "red"))(32),
-  lcols = rainbow(length(levels(pheno))), scale = c("row", "column",
-  "none"), slidetitle = "Log (Base 2) Foldchange")
+  lcols = rainbow(length(levels(pheno))), scaleValues = c("row", "column",
+  "none"), scaler = "linear", slidetitle = "Log (Base 2) Foldchange",
+  rowSort = TRUE)
 }
 \arguments{
 \item{mat}{Matrix containing the values to be plotted in the heatmap}
@@ -23,9 +24,13 @@ each line of the heatmap}
 
 \item{lcols}{Colours to indicate the column labels}
 
-\item{scale}{Scale expression values by either 'row', 'column', or 'none'}
+\item{scaleValues}{Scale expression values by either 'row', 'column', or 'none'}
+
+\item{scaler}{if "linear" use scale and remove mean and divide by sd, if "rank" transform to ranks}
 
 \item{slidetitle}{Text to be shown below the panel containing the dotplots}
+
+\item{rowSort}{if \code{TRUE} genes will be sorted according to the test statistic}
 }
 \description{
 Draws a heatmap of a matrix (e.g. gene expression data) together with

@@ -13,8 +13,10 @@
 #' @param genenames Character vector giving genenames (or corresponding annotation)
 #' @param hcols Colours to be used in the heatmap
 #' @param lcols Colours to indicate the column labels
-#' @param scale Scale expression values by either 'row', 'column', or 'none'
+#' @param scaleValues Scale expression values by either 'row', 'column', or 'none'
+#' @param scaler if "linear" use scale and remove mean and divide by sd, if "rank" transform to ranks
 #' @param slidetitle Text to be shown below the panel containing the dotplots
+#' @param rowSort if \code{TRUE} genes will be sorted according to the test statistic
 #' @author Florian Klinglmueller \email{float@@lefant.net}
 #' @examples
 #' 
@@ -31,25 +33,29 @@ heatslide <- function(mat,stat,pheno,
                       genenames=NULL,
                       hcols=colorRampPalette(c('blue','white','red'))(32),
                       lcols=rainbow(length(levels(pheno))),
-                      scale=c('row','column','none'),
-                      slidetitle='Log (Base 2) Foldchange'){
+                      scaleValues=c('row','column','none'),
+                      scaler='linear',
+                      slidetitle='Log (Base 2) Foldchange',
+                      rowSort=TRUE){
   require(grid)
   heatpanel <- function(matrix,colors){
     N <- nrow(matrix)
     M <- ncol(matrix)
+    
     pushViewport(dataViewport(1:M,0:N,extension=c(.05,0)))
     if(is.data.frame(matrix)){
         matrix <- as.matrix(matrix)
     }
-    data <- switch(scale[1],
-                   row=t(apply(matrix,1,scale)),
-                   column=apply(matrix,2,scale),
-                   both=matrix)
+    scaleF <- switch(scaler,"linear"=scale,"rank"=rank)
+    data <- switch(scaleValues[1],
+                   "row"=t(apply(matrix,1,scaleF)),
+                   "column"=apply(matrix,2,scaleF),
+                   "both"=matrix(scaleF(matrix),nrow(matrix),ncol(matrix)))
     levs <- length(colors)
     data.levels <- cut(data,levs)
     x <- rep(1:M,each=N)
     y <- rep(N:1,M)
-    grid.rect(unit(x,'native'),unit(y,'native'),height=unit(1,'native'),width=unit(1,'native'),gp=gpar(fill=colors[data.levels]),just='top')
+    grid.rect(unit(x,'native'),unit(y,'native'),height=unit(1,'native'),width=unit(1,'native'),gp=gpar(fill=colors[data.levels],lwd=draw.grid),just='top')
     xax <- grid.xaxis(at=1:M,label=colnames(matrix),gp=gpar(cex=.7),name='xax',draw=F)
     xax <- editGrob(xax,gPath('labels'),just='right',rot=90)
     grid.draw(xax)
@@ -69,9 +75,9 @@ heatslide <- function(mat,stat,pheno,
     if(N<2){
         grid.segments(rep(0,N),unit(N:1,'native'),rep(1,N),unit(N:1,'native'),name='lines',gp=gpar(lty=2))
     }
-    grid.segments(rep(0,N),unit(c(1:(N-1))+.5,'native'),rep(1,N),unit(c(1:(N-1))+.5,'native'),name='seperators')
+    grid.segments(rep(0,N),unit(c(1:(N-1))+.5,'native'),rep(1,N),unit(c(1:(N-1))+.5,'native'),name='seperators',gp=gpar(lwd=draw.grid))
     if(N<=2){
-        grid.segments(rep(0,N),unit((((N:1)-.5)+.5),'native'),rep(1,N),unit((((N:1)-.5)+.5/(1+1)),'native'),name='lines',gp=gpar(lty=2))
+        grid.segments(rep(0,N),unit((((N:1)-.5)+.5),'native'),rep(1,N),unit((((N:1)-.5)+.5/(1+1)),'native'),name='lines',gp=gpar(lty=2,lwd=draw.grid))
         
         grid.rect(statistics,unit((((N:1)-.5)+.5/(1+1)),'native'),width=unit(1,'mm'),height=1/1,default.units='native',name=paste(1,'S',sep=''),gp=gpar(fill='red'))
     }
@@ -138,8 +144,16 @@ heatslide <- function(mat,stat,pheno,
   legendpanel(levels(pheno),lcols)
   upViewport(2)
   pushViewport(vp2)
-  ## something doesn't work yet
+  
+  if(rowSort){
+      mat <- mat[order(stat,decreasing=TRUE),]
+      stat <- sort(stat,decreasing=TRUE)
+      if(!is.null(genenames)){
+          genenames <- genenames[order(stat,decreasing=TRUE)]
+      }
+  }
 
+  draw.grid <- ifelse(nrow(mat)>200,0,1)
   heatpanel(mat,hcols)
   keypanel(pheno,lcols)
   upViewport(2)
