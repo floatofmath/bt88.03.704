@@ -4,7 +4,7 @@
 \alias{makeUCSClink}
 \title{UCSC Browser link}
 \usage{
-makeUCSClink(locus, project = "&hgsid=201952662_blwe2mLIAlJ066Rb2rEAvZDqZiGz")
+makeUCSClink(locus, project = "", link = "UCSC")
 }
 \arguments{
 \item{locus}{transcript location in the form "loc:start-end"}
