@@ -46,13 +46,14 @@ heatslide <- function(mat,stat,pheno,
     if(is.data.frame(matrix)){
         matrix <- as.matrix(matrix)
     }
-    scaleF <- switch(scaler,"linear"=scale,"rank"=rank)
+    levs <- length(colors)
+    scaleF <- switch(scaler,"linear"=function(x) cut(x,levs,labels=FALSE),"rank"=rank)
     data <- switch(scaleValues[1],
                    "row"=t(apply(matrix,1,scaleF)),
                    "column"=apply(matrix,2,scaleF),
                    "both"=matrix(scaleF(matrix),nrow(matrix),ncol(matrix)))
-    levs <- length(colors)
-    data.levels <- cut(data,levs)
+
+    data.levels <- as.numeric(data)
     x <- rep(1:M,each=N)
     y <- rep(N:1,M)
     grid.rect(unit(x,'native'),unit(y,'native'),height=unit(1,'native'),width=unit(1,'native'),gp=gpar(fill=colors[data.levels],lwd=draw.grid),just='top')
@@ -146,10 +147,11 @@ heatslide <- function(mat,stat,pheno,
   pushViewport(vp2)
   
   if(rowSort){
-      mat <- mat[order(stat,decreasing=TRUE),]
-      stat <- sort(stat,decreasing=TRUE)
+      oo <- order(stat,decreasing=TRUE)
+      mat <- mat[oo,]
+      stat <- stat[oo]
       if(!is.null(genenames)){
-          genenames <- genenames[order(stat,decreasing=TRUE)]
+          genenames <- genenames[oo]
       }
   }
 
