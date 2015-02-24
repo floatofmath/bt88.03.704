@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"$if(lang)$ lang="$lang$" xml:lang="$lang$"$endif$>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="generator" content="pandoc" />
+$for(author-meta)$
+<meta name="author" content="$author-meta$" />
+$endfor$
+$for(client)$
+<meta name="client" content="$client$" />
+$endfor$
+$for(project)$
+<meta name="project" content="$project$" />
+$endfor$
+$for(review)$
+<meta name="review" content="$review$" />
+$endfor$
+$if(date)$
+<meta name="date" content="$date$" />
+$endif$
+<title>$if(title-prefix)$$title-prefix$ - $endif$$pagetitle$</title>
+<style type="text/css">code{white-space: pre;}</style>
+$if(quotes)$
+<style type="text/css">q { quotes: "“" "”" "‘" "’"; }</style>
+$endif$
+$if(highlighting-css)$
+<style type="text/css">
+$highlighting-css$
+</style>
+$endif$
+<script src="/home/float/R/x86_64-pc-linux-gnu-library/3.1/DT/htmlwidgets/lib/datatables/js/jquery.dataTables.min.js"></script>
+<script src="/home/float/R/x86_64-pc-linux-gnu-library/3.1/DT/htmlwidgets/lib/datatables/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet"  href="/home/float/R/x86_64-pc-linux-gnu-library/3.1/DT/htmlwidgets/lib/datatables/css/jquery.dataTables.min.css" type="text/css"/>
+$for(css)$
+<link rel="stylesheet" href="$css$" $if(html5)$$else$type="text/css"
+      $endif$/>
+$endfor$
+$if(math)$
+$math$
+$endif$
+$for(header-includes)$
+$header-includes$
+$endfor$
+</head>
+<body>
+$for(include-before)$
+$include-before$
+$endfor$
+$if(title)$
+<div id="corporate">
+<div id="logo">
+<img src="logo.gif" alt="IMS-logo"/>
+</div>
+<div id="addres">
+Zentrum für Medizinische Statistik, Informatik, und Intelligente
+Systeme</br>
+Institut für Medizinische Statistik</br>
+Spitalgasse 23, 1090 Wien
+</div>
+</div>
+$if(noheader)$
+$else$
+<table id="meta" width="100%">
+<tr>
+<th align="left" width="40%">Studienname:</br>$project$</th>
+<th align="right" width="20%">Projektnummer:</br>$number$</th>
+<th align="right" width="20%">Betreuer:</br>$author$</th>
+<th align="right"
+    width="20%">Datum:</br>$date$</br>Version:<p id="version"><p></th>
+</tr>
+<tr class="even" border-width="0px">
+<th align="left" width="40%">$client$</th>
+<th align="right" width="60%" colspan=3>Email:</br>$email$</th>
+</tr>
+</table>
+$endif$
+$if(final)$
+$else$
+<h2 id="disclaimer">Draft - Vorläufige Arbeitsversion</h2>
+$endif$
+<div id="$idprefix$header">
+<h1 class="title">$title$</h1>
+$if(subtitle)$
+<h1 class="subtitle">$subtitle$</h1>
+$endif$
+$if(noheader)$
+<div id="contact">
+by $author$ - <a href="mailto:$email$">$email$</a>
+$endif$
+</div>
+</div>
+$endif$
+$if(toc)$
+<div id="$idprefix$TOC">
+$toc$
+</div>
+$endif$
+$if(final)$
+$else$
+<div id="draft">
+</div>
+$endif$
+$body$
+$for(include-after)$
+$include-after$
+$endfor$
+<script>
+  d = new Date();
+  document.getElementById("version").innerHTML = d.toDateString()
+</script>
+</body>
+</html>
