@@ -169,7 +169,19 @@ list_fold <- function(list,fun,z=NULL){
     foldr(list,z,fun)
 }
 
-
+##' Computes a confidence interval for the standard deviation for a
+##' standard deviation estimate
+##' 
+##' @title Standard deviation confidence interval
+##' @param sd estimated standard deviation
+##' @param n number of observations used for the estimate
+##' @param alpha desired coverage probability
+##' @return numeric vector with lower and upper bound
+##' @author float
+##' @export sd_confint
+sd_confint <- function(sd,n,alpha){
+    c(sd*sqrt((n-1)/qchisq(alpha/2,n-1,lower=FALSE)),sd*sqrt((n-1)/qchisq(alpha/2,n-1)))
+}
 
 #' Print system load and user overview
 #' 
