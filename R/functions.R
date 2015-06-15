@@ -92,11 +92,30 @@ multiplot <- function(..., plotlist=NULL, cols=1, layout=NULL, titles=NULL) {
 #'
 #' @export
 vfile <- function(base,ending='Rd',format='%y%m%d',hash=FALSE){
-    fname <- paste(base,'_',format(Sys.time(),format),'.',ending,sep='')
+    tstring <- ifelse(hash,,format(Sys.time(),format))
+    fname <- paste(base,'_',Sys.info()['nodename'],'_',tstring,'.',ending,sep='')
     fname
 }
 
-
+##' Read random numbers from sytems random devices
+##'
+##' Based on stackoverflow question http://stackoverflow.com/questions/11505039
+##' 
+##' @title read random numbers
+##' @param n number of random numbers to read
+##' @param a start of range
+##' @param b end of range
+##' @param dev device file location
+##' @return numeric vector of leng \code{n} with numbers between \code{a} and \code{b}
+##' 
+##' @author Spacedman
+readRandom <- function(n,a,b,dev="/dev/urandom"){
+  size = b-a + 1
+  rng = file(dev,"rb") # open connection
+  nums = readBin(rng,what="integer",n=n) # read some 8-byte integers 
+  close(rng) # close the connection
+  return( a + nums %% size ) # reduce range and shift
+}
 
 #' Newest (versioned) file
 #' 
@@ -208,4 +227,77 @@ names(av.load) <- c('1min','5min','15min')
     cat('Swap used:    ',round(prop.swap,2)*100,'%\n')
     cat('Active users: \n')
     print(proc)
+}
+
+##------------------------------------------------------------------------------
+##------------------------------------------------------------------------------
+##' .. content for \description{} (no empty lines) ..
+##'
+##' .. content for \details{} ..
+##' @title 
+##'
+##' ##' Wrapper around mclapply to track progress
+##' 
+##' Based on http://stackoverflow.com/questions/10984556
+##' 
+##' @param X         a vector (atomic or list) or an expressions vector. Other
+##'                  objects (including classed objects) will be coerced by
+##'                  ‘as.list’
+##' @param FUN       the function to be applied to
+##' @param ...       optional arguments to ‘FUN’
+##' @param mc.preschedule see mclapply
+##' @param mc.set.seed see mclapply
+##' @param mc.silent see mclapply
+##' @param mc.cores see mclapply
+##' @param mc.cleanup see mclapply
+##' @param mc.allow.recursive see mclapply
+##' @param mc.progress track progress?
+##' @param mc.style    style of progress bar (see txtProgressBar)
+##'
+##' @return A list of the same length as X and named by X. 
+##' @author wannymahoots
+##' 
+##' @examples
+##' x <- mclapply2(1:1000, function(i, y) Sys.sleep(0.01))
+##' x <- mclapply2(1:3, function(i, y) Sys.sleep(1), mc.cores=1)
+##' @author Florian Klinglmueller
+mclapply2 <- function(X, FUN, ..., 
+    mc.preschedule = TRUE, mc.set.seed = TRUE,
+    mc.silent = FALSE, mc.cores = getOption("mc.cores", 2L),
+    mc.cleanup = TRUE, mc.allow.recursive = TRUE,
+    mc.progress=TRUE, mc.style=3) 
+{
+    if (!is.vector(X) || is.object(X)) X <- as.list(X)
+
+    if (mc.progress) {
+        f <- fifo(tempfile(), open="w+b", blocking=T)
+        p <- parallel:::mcfork()
+        pb <- txtProgressBar(0, length(X), style=mc.style)
+        setTxtProgressBar(pb, 0) 
+        progress <- 0
+        if (inherits(p, "masterProcess")) {
+            while (progress < length(X)) {
+                readBin(f, "double")
+                progress <- progress + 1
+                setTxtProgressBar(pb, progress) 
+            }
+            cat("\n")
+            parallel:::mcexit()
+        }
+    }
+    tryCatch({
+        result <- mclapply(X, function(...) {
+                res <- FUN(...)
+                if (mc.progress) writeBin(1, f)
+                res
+            }, 
+            mc.preschedule = mc.preschedule, mc.set.seed = mc.set.seed,
+            mc.silent = mc.silent, mc.cores = mc.cores,
+            mc.cleanup = mc.cleanup, mc.allow.recursive = mc.allow.recursive
+        )
+
+    }, finally = {
+        if (mc.progress) close(f)
+    })
+    result
 }
