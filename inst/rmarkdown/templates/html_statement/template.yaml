@@ -1,0 +1,5 @@
+name: "IMS Statistical Statement Template"
+description: >
+  Template for statistical statements written by IMS staff. This 
+  customises basic HTML output and applies corporate identity design. 
+create_dir: false

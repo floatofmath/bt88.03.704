@@ -1,77 +1,18 @@
 body {
-  position: relative;
   background-color: #fff;
   margin: 1em auto;
   max-width: 700px;
   overflow: visible;
   padding-left: 2em;
   padding-right: 2em;
-  font-family: "Times New Roman", Times, serif;
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
   line-height: 1.35;
 }
 
-#draft {
-    position: absolute;
-    height: 100%;
-    width: 700px;
-    background-width: 700px;
-}
-
 #header {
-  min-height: 100px;
-  text-align: right;
-  padding-left: 40px;
-  padding-right: 20px;
-  background-color: #FFFFFF30;
-}
-
-#corporate {
-    width: 100%;
-    text-align: left;
-    margin-bottom: 2em;
-    padding-top: 60px;
-}
-
-#logo {
-    float: left;
-    width: 200px;
-    height: auto;
-}
-
-#logo img {
-    border: 0px;
-    padding-right: 1em;
-}
-
-#address {
-    float: right;
-    width: 450px;
-}
-
-#disclaimer {
-    border: 1px solid gray;
-    color: gray;
-    font-style: italic;
-    text-align: center;
-    padding: 1em;
-}
-
-#meta {
-  margin: auto;
-  border: 1px solid gray;
-  border-collapse: collapse;
-  margin-bottom: 2em;
-}
-
-#meta th { 
-  vertical-align: text-top;
-  border: 1px solid gray;
-}
-
-#header .subtitle {
-  font-size: 18px;
-  font-style: italic;
+  text-align: center;
+  background-image: logo.png;
 }
 
 #TOC {
@@ -113,12 +54,12 @@ table {
   border-collapse: collapse;
 }
 table th {
-  border-width: 1px;
+  border-width: 2px;
   padding: 5px;
   border-style: inset;
 }
 table td {
-  border-width: 0px;
+  border-width: 1px;
   border-style: inset;
   line-height: 18px;
   padding: 5px 5px;
@@ -130,19 +71,12 @@ table, table th, table td {
 table thead, table tr.even {
   background-color: #f7f7f7;
 }
-caption {
-   text-align: left;
-   font-family: "Helvetica Neue", "Open Sans", Helvetica, Arial, sans-serif;
-   color: #666666;
-}
-
 
 p {
   margin: 0.5em 0;
 }
 
 blockquote {
-  font-style: italic;
   background-color: #f6f6f6;
   padding: 0.25em 0.75em;
 }
@@ -200,20 +134,11 @@ p > code, li > code {
 
 div.figure {
   text-align: center;
-  padding: 20px;
 }
-div.figure .caption {
-   font-family: "Helvetica Neue", "Open Sans", Helvetica, Arial, sans-serif;
-   color: #666666;
-}
-    
-    
 img {
-  width: 100%;
-  height: auto;
   background-color: #FFFFFF;
   padding: 2px;
-  border: 0px solid #DDDDDD;
+  border: 1px solid #DDDDDD;
   border-radius: 3px;
   border: 1px solid #CCCCCC;
   margin: 0 5px;

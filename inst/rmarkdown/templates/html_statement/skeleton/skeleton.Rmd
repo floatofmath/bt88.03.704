@@ -1,0 +1,16 @@
+---
+title: "Statistical Statement"
+author: "Statement Author"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: false
+    fig_caption: true
+    css: vignette.css
+---
+
+
+## Data cleaning
+
+## Statistical analysis
+
