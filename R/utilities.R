@@ -8,6 +8,8 @@
 ##' @param m Number of columns to be shown at most
 ##' @return A matrix or data.frame with \code{n} rows and \code{m} columns
 ##' @author float
+##' @examples
+##' corner(matrix(rnorm(1000),100,100))
 ##' 
 ##' @export
 corner <- function(dat,n=6,m=4){

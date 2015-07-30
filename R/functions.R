@@ -30,22 +30,33 @@
 #' multiplot(p1,p2,cols=2)
 #' 
 #' @export multiplot
-multiplot <- function(..., plotlist=NULL, cols=1, layout=NULL, titles=NULL) {
+multiplot <- function(..., plotlist=NULL, cols=1, layout=NULL, titles=NULL, widths=NULL,heights=NULL) {
   require(grid)
 
   # Make a list from the ... arguments and plotlist
   plots <- c(list(...), plotlist)
-
+  
   numPlots = length(plots)
 
   # If layout is NULL, then use 'cols' to determine layout
   if (is.null(layout)) {
     # Make the panel
     # ncol: Number of columns of plots
-    # nrow: Number of rows needed, calculated from # of cols
-    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
-                    ncol = cols, nrow = ceiling(numPlots/cols))
+                                        # nrow: Number of rows needed, calculated from # of cols
+    rows <- ceiling(numPlots/cols)
+    layout <- matrix(seq(1, cols * rows),
+                    ncol = cols, nrow = rows)
+  } else {
+      rows <- layout[1]
+      cols <- layout[2]
   }
+  if (is.null(widths)) {
+      widths = unit(rep_len(1,cols),'null')
+  }
+  if (is.null(heights)) {
+      heights = unit(rep_len(1,rows),'null')
+  }
+  
   # Add titles, you could do this for each plot, but it seems nice to have it here as well
   if(!is.null(titles)){
      if(numPlots != length(titles)){
@@ -62,7 +73,7 @@ multiplot <- function(..., plotlist=NULL, cols=1, layout=NULL, titles=NULL) {
   } else {
     # Set up the page
     grid.newpage()
-    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout),widths,heights)))
 
     # Make each plot, in the correct location
     for (i in 1:numPlots) {
