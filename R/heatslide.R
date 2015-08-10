@@ -17,6 +17,7 @@
 #' @param scaler if "linear" use scale and remove mean and divide by sd, if "rank" transform to ranks
 #' @param slidetitle Text to be shown below the panel containing the dotplots
 #' @param rowSort if \code{TRUE} genes will be sorted according to the test statistic
+#' @param colSort if \code{FALSE} chips will be sorted according to the phenotype
 #' @author Florian Klinglmueller \email{float@@lefant.net}
 #' @examples
 #' 
@@ -36,7 +37,8 @@ heatslide <- function(mat,stat,pheno,
                       scaleValues=c('row','column','none'),
                       scaler='linear',
                       slidetitle='Log (Base 2) Foldchange',
-                      rowSort=TRUE){
+                      rowSort=TRUE,
+                      colSort=TRUE){
   require(grid)
   heatpanel <- function(matrix,colors){
     N <- nrow(matrix)
@@ -154,7 +156,10 @@ heatslide <- function(mat,stat,pheno,
           genenames <- genenames[oo]
       }
   }
-
+  if(colSort){
+      mat <- mat[,order(pheno)]
+      pheno <- sort(pheno)
+  }
   draw.grid <- ifelse(nrow(mat)>200,0,1)
   heatpanel(mat,hcols)
   keypanel(pheno,lcols)
