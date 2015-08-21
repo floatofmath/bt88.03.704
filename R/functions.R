@@ -312,3 +312,139 @@ mclapply2 <- function(X, FUN, ...,
     })
     result
 }
+
+##' Draw a series of line plots of expression values. \code{expressionLines} line plots of the first \code{n} probes from array data \code{data}. If a second matching dataset is given lines for the corresponding expressions in this dataset are overlayed. This maybe helpful to compare a set of expressions in the raw and normalized versions of a dataset. 
+##'
+##' @title Expression line plots
+##' @param data expression dataset, object for which \code{exprs} returns a matrix of expression values
+##' @param normalized alternative expression dataset to compare with \code{data}
+##' @param n number of rows to plot, or character vector with rownames to be plotted
+##' @param faulty numeric index vector or column names of chips that should be highlighted in the plots
+##' @return ggplot2 plot object
+##' @author float
+##' @export
+expressionLines <- function(data,normalized=NULL,n=10,faulty=NULL,types=c('raw','normalized')){
+    if(length(n) == 1){
+        n <- seq(1,n,1)
+    }
+    df <- as.data.frame(exprs(data)[n,])
+    df$pid <- rownames(df)
+    cnames <- colnames(df)
+    df$type <- types[1]
+    if(!is.null(normalized)){
+        dfn <- as.data.frame(exprs(normalized)[n,])
+        dfn$pid <- rownames(dfn)
+        dfn$type <- types[2]
+        if(any(rownames(df)!=rownames(dfn))){
+            stop("Mismatching rownames: raw and normalized data must be of same row-order and content")
+        }
+        if(any(colnames(df)!=colnames(dfn))){
+            stop("Mismatching colnames: raw and normalized data must contain same chips in same order")
+        }
+        df <- rbind(df,dfn)
+    }
+
+    df <- melt(df,value.name='expr',variable.name=c('chip'),id.vars=c('type','pid'))
+    df <- ddply(df,.(pid,type),transform,expr=scale(expr))
+    lp <- ggplot(df) + geom_path(aes(chip,expr,group=interaction(pid,type),col=type)) + facet_grid(pid~.)
+    if(!is.null(faulty)){
+        if(is.character(faulty)){
+            if(!all(faulty  %in% cnames)){
+                stop("All faulty chips have to be in the dataset")
+            }
+            fid <- which(cnames==faulty)
+            names(fid) <- faulty
+        } else if(is.numeric(faulty)){
+            fid <- faulty
+            faulty <- cnames[fid]
+            names(fid) <- faulty
+        } else {
+            stop('Invalid faulty index given')
+        }
+        df$ymx <- -Inf
+        df$ymn <- -Inf
+        df$xmn <- 1
+        df$xmx <- 0
+        df <- within(df,{ ymx[chip %in% faulty] <- Inf
+                          xmn[chip %in% faulty] <- fid[as.character(chip[chip %in% faulty])]
+                          xmx <- xmn+1})
+
+        lp <- ggplot(df) + geom_path(aes(chip,expr,group=interaction(pid,type),col=type)) + facet_grid(pid~.)
+        lp <- lp+geom_rect(aes(xmin=xmn,xmax=xmx,ymin=ymn,ymax=ymx),alpha=.1,fill='red')
+    }
+    return(lp)
+}
+
+##' Compute euclidean distance between raw and normalized data for each probe.
+##'
+##' @title Distance between raw and normalized data
+##' @param raw \code{expressionSet} with non-normalized data
+##' @param normalized \code{expressionSet} with normalized data
+##' @param rowsets a named \code{list} of row index sets for which the distances should be computed
+##' @param colsets a named \code{list} of column index sets for which the distances should be computed
+##' @return numeric vector with euclidean distances
+##' @author float
+##' @export
+normDist <- function(raw,normalized,rowsets=NULL,colsets=NULL){
+    raw <- exprs(raw)
+    normalized <- exprs(normalized)
+    if(is.null(rowsets) & is.null(colsets)){
+        return(pdDist(raw,normalized))
+    }
+    if(!is.null(rowsets)){
+        rowsets <- lapply(rowsets,function(idx) pdDist(raw[idx,],normalized[idx,]))
+        rowsets <- rbindlist(lapply(names(rowsets),function(n) data.frame(exprs=rowsets[[n]],name=n)))
+    }
+    if(!is.null(colsets)){
+        colsets <- lapply(colsets,function(idx) pdDist(raw[,idx],normalized[,idx]))
+        colsets <- rbindlist(lapply(names(colsets),function(n) data.frame(exprs=colsets[[n]],name=n)))
+    }
+    rbind(rowsets,colsets)
+}
+
+##' Computed euclidean distance between corresponding rows of two matrices
+##'
+##' @title paired distances
+##' @param raw first numeric matrix
+##' @param normalized second numeric matrix
+##' @return numeric vector with distances
+##' @author float
+pdDist <- function(raw,normalized){
+    n <- nrow(raw)
+    cpr <- apply(raw,1,crossprod)
+    cpn <- apply(normalized,1,crossprod)
+    cpb <- sapply(1:n,function(i) crossprod(raw[i,],normalized[i,]))
+    sqrt(cpr+cpn-2*cpb)
+}
+    
+
+    
+groupwiseScatter <- function(data,pheno,faulty=NULL){
+    gwCombis <- function(gwData){
+        combis <- expand.grid(levels(gwData$chip),levels(gwData$chip))
+        combis <- combis[combis[,1]!=combis[,2],]
+        combis <- combis[!duplicated(apply(combis,1,function(l) paste(sort(l),collapse=''))),]
+        rbindlist(apply(combis,1,function(i) cbind(gwData[gwData$chip==i[1],],data.frame(chip2=i[2],value2=with(gwData,value[chip==i[2]])))))
+    }
+    cnames <- colnames(data)
+    out <- lapply(levels(pheno),function(level) cbind(melt(data[,pheno==level],varnames=c('pid','chip')),level))
+    out <- rbindlist(lapply(out,gwCombis))
+    if(!is.null(faulty)){
+        if(is.character(faulty)){
+            if(!all(faulty  %in% cnames)){
+                stop("All faulty chips have to be in the dataset")
+            }
+            fid <- which(cnames==faulty)
+            names(fid) <- faulty
+        } else if(is.numeric(faulty)){
+            fid <- faulty
+            faulty <- cnames[fid]
+            names(fid) <- faulty
+        } else {
+            stop('Invalid faulty index given')
+        }
+    }
+    ggplot(out)+geom_rect(xmin=-Inf,xmax=Inf,ymin=-Inf,ymax=Inf,fill='red',alpha=.01,subset=.(chip %in% faulty | chip2 %in% faulty))+geom_point(aes(value+value2,value-value2))+facet_wrap(chip2~chip,nrow=length(levels(pheno)))+geom_hline(yintercept=0,col='red')+geom_smooth(aes(value+value2,value-value2))
+}
+        
+##groupwiseScatter(exprs(data.sum)[select.mad,],design$treatment,faulty=c(8,10,11))
