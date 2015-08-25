@@ -4,12 +4,16 @@
 \alias{normDist}
 \title{Distance between raw and normalized data}
 \usage{
-normDist(raw, normalized)
+normDist(raw, normalized, rowsets = NULL, colsets = NULL)
 }
 \arguments{
 \item{raw}{\code{expressionSet} with non-normalized data}
 
 \item{normalized}{\code{expressionSet} with normalized data}
+
+\item{rowsets}{a named \code{list} of row index sets for which the distances should be computed}
+
+\item{colsets}{a named \code{list} of column index sets for which the distances should be computed}
 }
 \value{
 numeric vector with euclidean distances

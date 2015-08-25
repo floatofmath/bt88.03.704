@@ -346,7 +346,7 @@ expressionLines <- function(data,normalized=NULL,n=10,faulty=NULL,types=c('raw',
 
     df <- melt(df,value.name='expr',variable.name=c('chip'),id.vars=c('type','pid'))
     df <- ddply(df,.(pid,type),transform,expr=scale(expr))
-    lp <- ggplot(df) + geom_path(aes(chip,expr,group=interaction(pid,type),col=type)) + facet_grid(pid~.)
+    lp <- ggplot(df) + geom_path(aes(chip,expr,group=interaction(pid,type),col=type)) + facet_grid(pid~.) + theme(axis.text.x = element_text(angle = 45, hjust = 1,vjust=1))
     if(!is.null(faulty)){
         if(is.character(faulty)){
             if(!all(faulty  %in% cnames)){
@@ -366,11 +366,11 @@ expressionLines <- function(data,normalized=NULL,n=10,faulty=NULL,types=c('raw',
         df$xmn <- 1
         df$xmx <- 0
         df <- within(df,{ ymx[chip %in% faulty] <- Inf
-                          xmn[chip %in% faulty] <- fid[as.character(chip[chip %in% faulty])]
+                          xmn[chip %in% faulty] <- fid[as.character(chip[chip %in% faulty])] - .5
                           xmx <- xmn+1})
 
         lp <- ggplot(df) + geom_path(aes(chip,expr,group=interaction(pid,type),col=type)) + facet_grid(pid~.)
-        lp <- lp+geom_rect(aes(xmin=xmn,xmax=xmx,ymin=ymn,ymax=ymx),alpha=.1,fill='red')
+        lp <- lp+geom_rect(aes(xmin=xmn,xmax=xmx,ymin=ymn,ymax=ymx),alpha=.1,fill='red') + theme(axis.text.x = element_text(angle = 45, hjust = 1,vjust=1))
     }
     return(lp)
 }
@@ -417,9 +417,42 @@ pdDist <- function(raw,normalized){
     sqrt(cpr+cpn-2*cpb)
 }
     
-
+##' Plot distribution of distances between raw and normalized data - potentially for a number of subsets
+##'
+##' @title Plot normDist
+##' @param raw \code{expressionSet} with raw data
+##' @param normalized \code{expressionSet} with normalized data
+##' @param ... further arguments to \code{\link{normDist}}
+##' @return ggplot2 plot 
+##' @author float
+##'
+##' @export
+plotNormDist <- function(raw,normalized,...){
+    nd <- normDist(raw,normalized,...)
+    if(ncol(nd)<2){
+        nd <- data.frame(exprs = nd)
+        qplot(exprs,data=nd,geom='density')
+    } else {
+        qplot(exprs,data=nd,col=name,geom='density')
+    }
+}
     
+    
+    
+    
+##' Draws MA (or Bland-Altman) plots for all pairs of arrays within groups of a treatment factor 
+##'
+##' @title groupwise Scatter plots
+##' @param data \code{expressionSet} with data to plot
+##' @param pheno treatment factor variable
+##' @param faulty optional - columns to be highlighted (e.g. chips with quality issues)
+##' @return ggplot2 object
+##' @author float
+##'
+##' @export
 groupwiseScatter <- function(data,pheno,faulty=NULL){
+    require(reshape2)
+    require(plyr)
     gwCombis <- function(gwData){
         combis <- expand.grid(levels(gwData$chip),levels(gwData$chip))
         combis <- combis[combis[,1]!=combis[,2],]
@@ -447,4 +480,3 @@ groupwiseScatter <- function(data,pheno,faulty=NULL){
     ggplot(out)+geom_rect(xmin=-Inf,xmax=Inf,ymin=-Inf,ymax=Inf,fill='red',alpha=.01,subset=.(chip %in% faulty | chip2 %in% faulty))+geom_point(aes(value+value2,value-value2))+facet_wrap(chip2~chip,nrow=length(levels(pheno)))+geom_hline(yintercept=0,col='red')+geom_smooth(aes(value+value2,value-value2))
 }
         
-##groupwiseScatter(exprs(data.sum)[select.mad,],design$treatment,faulty=c(8,10,11))
