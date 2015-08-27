@@ -272,6 +272,8 @@ names(av.load) <- c('1min','5min','15min')
 ##' x <- mclapply2(1:1000, function(i, y) Sys.sleep(0.01))
 ##' x <- mclapply2(1:3, function(i, y) Sys.sleep(1), mc.cores=1)
 ##' @author Florian Klinglmueller
+##'
+##' @export
 mclapply2 <- function(X, FUN, ..., 
     mc.preschedule = TRUE, mc.set.seed = TRUE,
     mc.silent = FALSE, mc.cores = getOption("mc.cores", 2L),
