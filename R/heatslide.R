@@ -30,6 +30,7 @@
 #'     heatslide(mat,stat,labels,hcols,lcols)
 #' 
 #' @export heatslide
+#' @import grid
 heatslide <- function(mat,stat,pheno,
                       genenames=NULL,
                       hcols=colorRampPalette(c('blue','white','red'))(32),
