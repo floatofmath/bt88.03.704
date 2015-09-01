@@ -22,9 +22,11 @@
 #' out <- fit.limma(data,mm,cm)
 #' 
 #' topTable(out)
-#' 
+#'
+#' @import limma
 #' @export fit.limma
 fit.limma <- function(data,MM,CM){
+  require(limma)
   m <- lmFit(data,MM)
   cm <- contrasts.fit(m,CM)
   ecm <- eBayes(cm)

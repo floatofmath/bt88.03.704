@@ -9,6 +9,7 @@
 ##' @author Florian Klinglmueller
 ##' @template edger-ex
 ##' @export fit.edger
+##' @import edgeR
 fit.edger <- function(data,MM,CM,...){
     require(edgeR)
     fit <- glmFit(data,MM)

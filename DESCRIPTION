@@ -1,16 +1,16 @@
 Package: bt88.03.704
-Version: 0.0-1
-Date: 2014-02-11
-Title: MSI utility function
+Version: 0.1-0
+Date: 2015-09-01
+Title: floats MSI utility function
 Authors@R: c(person("float", "Developer", role = c("aut", "cre"),
-    email = "florian.klinglmueller@meduniwien.ac.at"))
+    email = "float@lefant.net"))
 Author: Florian Klinglmueller
 Maintainer: Florian Klinglmueller
-    <florian.klinglmueller@meduniwien.ac.at>
+    <float@lefant.net>
 Depends:
     R (>= 3.0.0),data.table (>= 1.9.4)
 Suggests:
-    ggplot2
+    ggplot2, limma, edgeR, grid, reshap2, plyr
 Description: Provides a number of useful functions and a container to put them
     in for further reuse
 License: MIT

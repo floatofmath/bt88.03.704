@@ -28,11 +28,11 @@
 #' p1 <- qplot(y,x,data=d,)
 #' p2 <- qplot(y,s,data=d)
 #' multiplot(p1,p2,cols=2)
-#' 
+#'
+#' @import grid
 #' @export multiplot
 multiplot <- function(..., plotlist=NULL, cols=1, layout=NULL, titles=NULL, widths=NULL,heights=NULL) {
   require(grid)
-
   # Make a list from the ... arguments and plotlist
   plots <- c(list(...), plotlist)
   
@@ -451,6 +451,8 @@ plotNormDist <- function(raw,normalized,...){
 ##' @return ggplot2 object
 ##' @author float
 ##'
+##' @import reshape2
+##' @import plyr
 ##' @export
 groupwiseScatter <- function(data,pheno,faulty=NULL){
     require(reshape2)

@@ -5,6 +5,7 @@
 ##' @param final Whether still in draft (will print more warnings etc.)
 ##' @author float
 ##' @export html_statement
+##' @importFrom rmarkdown  html_document
 html_statement <- function(toc = FALSE, final = FALSE){
     css <- system.file("statement/statement.css",package="bt88.03.704")
     template <- system.file("statement/statement.html",package="bt88.03.704")
