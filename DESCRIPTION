@@ -10,7 +10,12 @@ Maintainer: Florian Klinglmueller
 Depends:
     R (>= 3.0.0),data.table (>= 1.9.4)
 Suggests:
-    ggplot2, limma, edgeR, grid, reshape2, plyr
+    ggplot2,
+    limma,
+    edgeR,
+    grid,
+    reshape2,
+    plyr
 Description: Provides a number of useful functions and a container to put them
     in for further reuse
 License: MIT

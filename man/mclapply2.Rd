@@ -7,8 +7,8 @@ Based on http://stackoverflow.com/questions/10984556}
 \usage{
 mclapply2(X, FUN, ..., mc.preschedule = TRUE, mc.set.seed = TRUE,
   mc.silent = FALSE, mc.cores = getOption("mc.cores", 2L),
-  mc.cleanup = TRUE, mc.allow.recursive = TRUE, mc.progress = TRUE,
-  mc.style = 3)
+  mc.cleanup = TRUE, mc.allow.recursive = TRUE,
+  mc.progress = is.na(Sys.getenv()["RSTUDIO"]), mc.style = 3)
 }
 \arguments{
 \item{X}{a vector (atomic or list) or an expressions vector. Other
@@ -31,7 +31,7 @@ objects (including classed objects) will be coerced by
 
 \item{mc.allow.recursive}{see mclapply}
 
-\item{mc.progress}{track progress?}
+\item{mc.progress}{show a progress bar (by default: TRUE unless we think that we are in an Rstudio session)}
 
 \item{mc.style}{style of progress bar (see txtProgressBar)}
 }

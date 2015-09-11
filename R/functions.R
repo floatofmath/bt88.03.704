@@ -262,7 +262,7 @@ names(av.load) <- c('1min','5min','15min')
 ##' @param mc.cores see mclapply
 ##' @param mc.cleanup see mclapply
 ##' @param mc.allow.recursive see mclapply
-##' @param mc.progress track progress?
+##' @param mc.progress show a progress bar (by default: TRUE unless we think that we are in an Rstudio session)
 ##' @param mc.style    style of progress bar (see txtProgressBar)
 ##'
 ##' @return A list of the same length as X and named by X. 
@@ -278,7 +278,7 @@ mclapply2 <- function(X, FUN, ...,
     mc.preschedule = TRUE, mc.set.seed = TRUE,
     mc.silent = FALSE, mc.cores = getOption("mc.cores", 2L),
     mc.cleanup = TRUE, mc.allow.recursive = TRUE,
-    mc.progress=TRUE, mc.style=3) 
+    mc.progress=is.na(Sys.getenv()['RSTUDIO']), mc.style=3) 
 {
     if (!is.vector(X) || is.object(X)) X <- as.list(X)
 
@@ -324,8 +324,10 @@ mclapply2 <- function(X, FUN, ...,
 ##' @param faulty numeric index vector or column names of chips that should be highlighted in the plots
 ##' @return ggplot2 plot object
 ##' @author float
+##' @import ggplot2
 ##' @export
 expressionLines <- function(data,normalized=NULL,n=10,faulty=NULL,types=c('raw','normalized')){
+    require(ggplot2)
     if(length(n) == 1){
         n <- seq(1,n,1)
     }
