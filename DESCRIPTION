@@ -15,6 +15,7 @@ Suggests:
     edgeR,
     grid,
     reshape2,
+Imports:
     plyr
 Description: Provides a number of useful functions and a container to put them
     in for further reuse
