@@ -17,3 +17,19 @@ corner <- function(dat,n=6,m=4){
   m <- min(ncol(dat),m)
   dat[1:n,1:m]
 }
+
+##' recycle vector to match the length of another
+##'
+##' @title recycle
+##' @param a vector to be recycled
+##' @param b vector to be matched
+##' @return vector of length at least \code{b}
+##' @export
+##' @author Florian Klinglmueller
+recycle <- function(a,b){
+    if(length(a) < length(b)){
+        rep(a,length.out(b))
+    } else {
+        a
+    }
+}
