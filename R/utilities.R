@@ -31,6 +31,23 @@ corner.data.table <- function(dat,n=6,m=4){
   dat[1:n,1:m,with=F]
 }
 
+##' Rearrange columns of a \code{data.table} object, moving a list of columns to the front, while leaving the remaining columns in their original order.
+##'
+##' @title Move columns to front
+##' @param DT \code{data.table} object
+##' @param cols names of columns to move to the front
+##' @return \code{data.table} with rearranged columns
+##'
+##' @author Florian Klinglmueller
+##' @export
+move_to_front <- function(DT,cols){
+    all_cols <- names(DT)
+    new_cols <- c(cols,all_cols[!(all_cols %in% cols)])
+    datatable::setcolorder(DT,new_cols)
+    DT
+}
+
+
 ##' recycle vector to match the length of another
 ##'
 ##' @title recycle
