@@ -20,3 +20,4 @@ Imports:
 Description: Provides a number of useful functions and a container to put them
     in for further reuse
 License: MIT
+RoxygenNote: 5.0.1

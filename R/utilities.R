@@ -13,9 +13,22 @@
 ##' 
 ##' @export
 corner <- function(dat,n=6,m=4){
+    UseMethod("corner",dat)
+}
+
+##' @export
+corner.default <- function(dat,n=6,m=4){
   n <- min(nrow(dat),n)
   m <- min(ncol(dat),m)
   dat[1:n,1:m]
+}
+
+##' @method corner data.table
+##' @export
+corner.data.table <- function(dat,n=6,m=4){
+  n <- min(nrow(dat),n)
+  m <- min(ncol(dat),m)
+  dat[1:n,1:m,with=F]
 }
 
 ##' recycle vector to match the length of another
