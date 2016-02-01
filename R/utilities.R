@@ -43,7 +43,7 @@ corner.data.table <- function(dat,n=6,m=4){
 move_to_front <- function(DT,cols){
     all_cols <- names(DT)
     new_cols <- c(cols,all_cols[!(all_cols %in% cols)])
-    datatable::setcolorder(DT,new_cols)
+    data.table::setcolorder(DT,new_cols)
     DT
 }
 
