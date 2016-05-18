@@ -4,7 +4,7 @@
 \alias{html_statement}
 \title{HTML Statistical Statement}
 \usage{
-html_statement(toc = FALSE, final = FALSE)
+html_statement(toc = FALSE, final = FALSE, ...)
 }
 \arguments{
 \item{toc}{Whether to inclued a table of contents}
