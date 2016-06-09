@@ -442,7 +442,19 @@ plotNormDist <- function(raw,normalized,...){
 }
     
     
-    
+##'     ‘replicate’ is a wrapper for the common use of ‘mclapply2’ for
+##'     repeated evaluation of an expression (which will usually involve
+##'     random number generation).
+##'
+##' @title parallel replicate with progress
+##' @param n integer: the number of replications.
+##' @param expr the expression (a language object, usually a call) to evaluate repeatedly.
+##' @return An atomic vector or matrix or list of the same length as \code{n}.
+##' @author float
+##' @export
+replicate2 <- function(n,expr){
+    simplify2array(mclapply2(integer(n),eval.parent(substitute(function(...) expr))))
+}    
     
 ##' Draws MA (or Bland-Altman) plots for all pairs of arrays within groups of a treatment factor 
 ##'
