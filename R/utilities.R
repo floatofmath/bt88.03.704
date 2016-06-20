@@ -74,7 +74,8 @@ recycle <- function(a,b){
 ##' @param round Number of digits to print after the comma
 ##' @param n Number of rows to show. If ‘NULL’, the default, will print all rows if less than option ‘dplyr.print_max’. Otherwise, will print ‘dplyr.print_min’
 ##' @param width Width of text output to generate. This defaults to NULL, which means use ‘getOption("width")’ and only display the columns that fit on one screen. You can also set ‘options(dplyr.width = Inf)’ to override this default and always print all columns.
-##' @author float 
+##' @author float
+##' @export
 print.tbl_df <- function(x,...,round = 3,n=NULL,width=NULL){
     nums <- vapply(x, is.numeric, NA)
     x[nums] <- lapply(x[nums], round, digits = round)

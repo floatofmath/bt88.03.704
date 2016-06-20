@@ -2,6 +2,7 @@
 
 S3method(corner,data.table)
 S3method(corner,default)
+S3method(print,tbl_df)
 export(Rtop)
 export(corner)
 export(expressionLines)
