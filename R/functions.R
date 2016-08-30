@@ -326,7 +326,7 @@ mclapply2 <- function(X, FUN, ...,
 ##' @author float
 ##' @import ggplot2
 ##' @export
-expressionLines <- function(data,normalized=NULL,n=10,faulty=NULL,types=c('raw','normalized')){
+expressionLines <- function(data,normalized=NULL,n=10,faulty=NULL,types=c('raw','normalized'),scale=T){
     require(ggplot2)
     if(length(n) == 1){
         n <- seq(1,n,1)
@@ -349,7 +349,8 @@ expressionLines <- function(data,normalized=NULL,n=10,faulty=NULL,types=c('raw',
     }
 
     df <- melt(df,value.name='expr',variable.name=c('chip'),id.vars=c('type','pid'))
-    df <- ddply(df,.(pid,type),transform,expr=scale(expr))
+    if(scale)
+        df <- ddply(df,.(pid,type),transform,expr=scale(expr))
     lp <- ggplot(df) + geom_path(aes(chip,expr,group=interaction(pid,type),col=type)) + facet_grid(pid~.) + theme(axis.text.x = element_text(angle = 45, hjust = 1,vjust=1))
     if(!is.null(faulty)){
         if(is.character(faulty)){
