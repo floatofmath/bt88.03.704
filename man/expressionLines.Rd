@@ -5,7 +5,7 @@
 \title{Expression line plots}
 \usage{
 expressionLines(data, normalized = NULL, n = 10, faulty = NULL,
-  types = c("raw", "normalized"))
+  types = c("raw", "normalized"), scale = T)
 }
 \arguments{
 \item{data}{expression dataset, object for which \code{exprs} returns a matrix of expression values}
